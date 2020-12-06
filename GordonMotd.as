@@ -46,17 +46,24 @@ void MapInit()
 
 HookReturnCode DrawGordonAnimation(CBasePlayer@ pPlayer)
 {
-	CBaseEntity@ pWorld = null;
-
 	if( pPlayer !is null )
 	{
 		pPlayer.pev.viewmodel = strWelcomeModel;
 
-		if( ( @pWorld = g_EntityFuncs.Instance( 0 ) ) !is null && blMusicEnabled && !blMusicTriggered )
+		if( blMusicEnabled && !blMusicTriggered )
 		{
-			g_SoundSystem.PlaySound( pWorld.edict(), CHAN_MUSIC, strWelcomeMusic, flMusicVolume, ATTN_NONE );
-			blMusicTriggered = true;
+			g_Scheduler.SetTimeout( "PlayMusic", 0.1 );
 		}
 	}
 	return HOOK_CONTINUE;
+}
+
+void PlayMusic()
+{
+	CBaseEntity@ pWorld = null;
+	if( ( @pWorld = g_EntityFuncs.Instance( 0 ) ) !is null )
+	{
+		g_SoundSystem.PlaySound( pWorld.edict(), CHAN_MUSIC, strWelcomeMusic, flMusicVolume, ATTN_NONE );
+		blMusicTriggered = true;
+	}
 }
