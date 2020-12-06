@@ -44,26 +44,17 @@ void MapInit()
 	}
 }
 
-void MapActivate()
-{
-	dictionary music;
-	music ["targetname"]	= ( "welkum_muzak" );
-	music ["message"]		= ( "" + strWelcomeMusic );
-	music ["volume"]		= ( "" + flMusicVolume );
-	music ["spawnflags"]	= ( "3" );
-	CBaseEntity@ pWelcomeMusic = g_EntityFuncs.CreateEntity( "ambient_music", music, true );
-}
-
 HookReturnCode DrawGordonAnimation(CBasePlayer@ pPlayer)
 {
+	CBaseEntity@ pWorld = null;
+
 	if( pPlayer !is null )
 	{
-		if( blWelcomeEnabled )
-			pPlayer.pev.viewmodel = strWelcomeModel;
-		
-		if( blMusicEnabled && !blMusicTriggered )
+		pPlayer.pev.viewmodel = strWelcomeModel;
+
+		if( ( @pWorld = g_EntityFuncs.Instance( 0 ) ) !is null && blMusicEnabled && !blMusicTriggered )
 		{
-			g_EntityFuncs.FireTargets( "welkum_muzak", null, null, USE_ON, 0.0f, 0.0f );
+			g_SoundSystem.PlaySound( pWorld.edict(), CHAN_MUSIC, strWelcomeMusic, flMusicVolume, ATTN_NONE );
 			blMusicTriggered = true;
 		}
 	}
