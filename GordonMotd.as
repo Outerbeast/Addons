@@ -4,6 +4,16 @@ Edit GordonMotd_conf to customise the model and music played
 
 Model by: ra4fhe
 Original AMXX plugin by: KORD_12.7
+
+Installation:-
+Put the script in screipts/plugins and then
+add this to your default_plugins.txt
+
+	"plugin"
+ 	{
+        "name" "GordonMotd"
+		"script" "GordonMotd"
+	}
 */
 
 #include "GordonMotd_conf"
