@@ -11,7 +11,7 @@ add this to your default_plugins.txt
 
 	"plugin"
  	{
-        	"name" "GordonMotd"
+        "name" "GordonMotd"
 		"script" "GordonMotd"
 	}
 */
@@ -54,26 +54,27 @@ void MapInit()
 	}
 }
 
+void MapActivate()
+{
+	dictionary music;
+	music ["targetname"]	= ( "welkum_muzak" );
+	music ["message"]		= ( "" + strWelcomeMusic );
+	music ["volume"]		= ( "" + flMusicVolume );
+	music ["spawnflags"]	= ( "3" );
+	CBaseEntity@ pWelcomeMusic = g_EntityFuncs.CreateEntity( "ambient_music", music, true );
+}
+
 HookReturnCode DrawGordonAnimation(CBasePlayer@ pPlayer)
 {
-	if( pPlayer !is null )
+	if( pPlayer !is null && blWelcomeEnabled )
 	{
 		pPlayer.pev.viewmodel = strWelcomeModel;
 
 		if( blMusicEnabled && !blMusicTriggered )
 		{
-			g_Scheduler.SetTimeout( "PlayMusic", 0.1 );
+			g_EntityFuncs.FireTargets( "welkum_muzak", null, null, USE_ON, 0.0f, 0.5f );
+			blMusicTriggered = true;
 		}
 	}
 	return HOOK_CONTINUE;
-}
-
-void PlayMusic()
-{
-	CBaseEntity@ pWorld = null;
-	if( ( @pWorld = g_EntityFuncs.Instance( 0 ) ) !is null )
-	{
-		g_SoundSystem.PlaySound( pWorld.edict(), CHAN_MUSIC, strWelcomeMusic, flMusicVolume, ATTN_NONE );
-		blMusicTriggered = true;
-	}
 }
