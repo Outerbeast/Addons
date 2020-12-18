@@ -11,16 +11,14 @@ add this to your default_plugins.txt
 
 	"plugin"
  	{
-		"name" "GordonMotd"
+        "name" "GordonMotd"
 		"script" "GordonMotd"
 	}
 */
 
 #include "GordonMotd_conf"
 
-bool blMusicEnabled;
-bool blMusicTriggered;
-bool blWelcomeEnabled;
+bool blMusicEnabled, blMusicTriggered, blWelcomeEnabled;
 
 void PluginInit()
 {
