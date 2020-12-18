@@ -11,7 +11,7 @@ add this to your default_plugins.txt
 
 	"plugin"
  	{
-        "name" "GordonMotd"
+		"name" "GordonMotd"
 		"script" "GordonMotd"
 	}
 */
