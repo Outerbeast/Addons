@@ -34,9 +34,12 @@ void MapActivate()
 
 void MapStart()
 {
-    for( uint i = 1; i <= STR_BRUSHMODELS.length(); i++ )
+    for( uint i = 0; i < STR_BRUSHMODELS.length(); i++ )
     {
-       if( STR_BRUSHMODELS[i] == "" )
+        if( i == 0 )
+            continue;
+
+        if( STR_BRUSHMODELS[i] == "" )
         {
             dictionary brush =
             {
