@@ -26,7 +26,7 @@ void PluginInit()
 	g_Module.ScriptInfo.SetContactInfo( "svencoopedia.fandom.com" );
 
 	ReadCfg();
-	}
+}
 
 void ReadCfg()
 {
