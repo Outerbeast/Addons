@@ -2,7 +2,6 @@
 reports the missing ones and creates them in-game so they can be re-added to the bsp
 - Outerbeast
 */
-
 array<string> STR_BRUSHMODELS;
 
 void PluginInit()
@@ -18,17 +17,16 @@ void MapActivate()
 
     while( ( @pBrushEntity = g_EntityFuncs.FindEntityByString( pBrushEntity, "model", "*" ) ) !is null )
     {
-        if( !pBrushEntity.IsBSPModel() )
+        if( pBrushEntity is null || !pBrushEntity.IsBSPModel() )
             continue;
 
-        if( STR_BRUSHMODELS.find( "" + pBrushEntity.pev.model ) >= 0 )
+        if( STR_BRUSHMODELS.find( string( pBrushEntity.pev.model ) ) >= 0 )
             continue;
 
-        string strBrushMdl = string( pBrushEntity.pev.model ).SubString( 1, String::INVALID_INDEX );
-        int iCurrentBrushMdl = atoi( strBrushMdl );
+        uint iCurrentBrushMdl = atoi( string( pBrushEntity.pev.model ).Replace( "*", "" ) );
         STR_BRUSHMODELS.resize( iCurrentBrushMdl + 1 );
         STR_BRUSHMODELS[iCurrentBrushMdl] = "" + pBrushEntity.pev.model;
-        g_EngineFuncs.ServerPrint( "-- DEBUG -- Existing brush model: " + pBrushEntity.pev.model + "\n" );
+        g_EngineFuncs.ServerPrint( "-- DEBUG -- Found existing brush model: " + pBrushEntity.pev.model + "\n" );
     }
 }
 
@@ -44,10 +42,31 @@ void MapStart()
             dictionary brush =
             {
                 { "model", "*" + i },
-                { "targetname", "gaben_" + i }
+                { "targetname", "gabens_hairy_taint" }
             };
-            CBaseEntity@ pMissingBrush = g_EntityFuncs.CreateEntity( "func_wall_toggle", brush, true );
-            g_EngineFuncs.ServerPrint( "-- DEBUG -- Created missing brush model: " + pMissingBrush.pev.model + "\n" );
+            CBaseEntity@ pMissingBrush = g_EntityFuncs.CreateEntity( "func_wall_toggle", brush, false );
+
+            if( !BrushExists( string( pMissingBrush.pev.model ) ) )
+            {
+                g_EntityFuncs.DispatchSpawn( pMissingBrush.edict() );
+                g_EngineFuncs.ServerPrint( "-- DEBUG -- Created missing brush model: " + pMissingBrush.pev.model + "\n" );
+            }
         }
     }
+}
+
+bool BrushExists(const string strModel)
+{
+    CBaseEntity@ pTemp, pExistingBrush;
+
+    while( ( @pTemp = g_EntityFuncs.FindEntityByString( pTemp, "model", "" + strModel ) ) !is null )
+    {
+        if( !pTemp.IsBSPModel() || pTemp.GetTargetname() == "gabens_hairy_taint" )
+            continue;
+
+        @pExistingBrush = pTemp;
+        break;
+    }
+
+    return ( pExistingBrush !is null );
 }
