@@ -95,7 +95,7 @@ void MapInit()
 		{
 			{ "targetname", "welkum_muzak" },
 			{ "message", strWelcomeMusic },
-			{ "volume", atof( flMusicVolume ) },
+			{ "volume", "" + flMusicVolume },
 			{ "spawnflags", "3" }
 		};
 
@@ -196,8 +196,6 @@ void Config()
 			strWelcomeMusic = strCVarValue;
 		else if( STR_CVARS_KEYS[i] == "music_volume" )
 			flMusicVolume = atof( strCVarValue );
-
-		g_EngineFuncs.ServerPrint( "GordonMOTD: " + STR_CVARS_KEYS[i] + " " + strCVarValue + "\n" );
 	}
 
 	strWelcomeAnim_Current = CurrentAnimation();
