@@ -18,7 +18,7 @@ Add your CVars sparingly.
 
 - Outerbeast*/
 const string strCfgDir = "scripts/plugins/store/static.cfg";
-dictionary dCvars;
+dictionary dictCfg;
 
 void PluginInit()
 {
@@ -32,36 +32,43 @@ void ReadCfg()
 {
 	File@ pFile = g_FileSystem.OpenFile( strCfgDir, OpenFile::READ );
 
-	if( pFile !is null && pFile.IsOpen() )
+	if( pFile is null || !pFile.IsOpen() )
+		return;
+
+	while( !pFile.EOFReached() )
 	{
-		while( !pFile.EOFReached() )
-		{
-			string sLine;
-			pFile.ReadLine( sLine );
-			if( sLine.SubString(0,1) == "#" || sLine.IsEmpty() )
-				continue;
+		string strCurrentLine;
+		pFile.ReadLine( strCurrentLine );
+		if( strCurrentLine.SubString(0,1) == "#" || strCurrentLine.IsEmpty() )
+			continue;
 
-			array<string> parsed = sLine.Split( " " );
-			if( parsed.length() < 2 )
-				continue;
+		array<string> parsed = strCurrentLine.Split( " " );
+		if( parsed.length() < 2 )
+			continue;
 
-			dCvars[parsed[0]] = parsed[1];
-		}
-		pFile.Close();
+		dictCfg[parsed[0]] = parsed[1];
 	}
+
+	pFile.Close();
 }
 
 void MapInit()
 {	
-	array<string> @dCvarsKeys = dCvars.getKeys();
-	dCvarsKeys.sortAsc();
-	string CvarValue;
+	array<string> STR_CVARS_KEYS = dictCfg.getKeys();
+	STR_CVARS_KEYS.sortAsc();
+	string strCVarValue;
 
-	for( uint i = 0; i < dCvarsKeys.length(); ++i )
+	if( dictCfg.isEmpty() )
+		return;
+
+	for( uint i = 0; i < STR_CVARS_KEYS.length(); ++i )
 	{
-		dCvars.get( dCvarsKeys[i], CvarValue );
-		g_EngineFuncs.CVarSetFloat( dCvarsKeys[i], atof( CvarValue ) );
-		g_EngineFuncs.ServerPrint( "StaticCfg: Set CVar " + dCvarsKeys[i] + " " + CvarValue + "\n" );
+		if( STR_CVARS_KEYS[i] == "" || strCVarValue == "" )
+			continue;
+
+		dictCfg.get( STR_CVARS_KEYS[i], strCVarValue );
+		g_EngineFuncs.CVarSetFloat( STR_CVARS_KEYS[i], atof( strCVarValue ) );
+		g_EngineFuncs.ServerPrint( "StaticCfg: Set CVar " + STR_CVARS_KEYS[i] + " " + strCVarValue + "\n" );
 	}
 }
 /* Special thanks to
