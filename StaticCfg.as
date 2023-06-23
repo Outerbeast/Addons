@@ -1,21 +1,20 @@
 /* StaticCfg- Plugin for overriding standard map cvars
-Based on The StaticCfg AMXX plugin
+	Based on The StaticCfg AMXX plugin
 
-Installation:
-1) Put StaticCfg.as into svencoop_addon/scripts/plugins
-2) Add this to default_plugins.txt:
-	"plugin"
- 	{
-        "name" "StaticCfg"
-        "script" "StaticCfg"
- 	}
-3) Inside the dir svencoop_addon/scripts/plugins/store create the file static.cfg
-4) Add your CVars into this new config file
+	Installation:
+	1) Put StaticCfg.as into svencoop_addon/scripts/plugins
+	2) Add this to default_plugins.txt:
+		"plugin"
+		{
+			"name" "StaticCfg"
+			"script" "StaticCfg"
+		}
+	3) Inside the dir svencoop_addon/scripts/plugins/store create the file static.cfg
+	4) Add your CVars into this new config file
 
-WARNING:
-This will override map cvars and will potentially break maps if you don't know what you're doing.
-Add your CVars sparingly.
-
+	WARNING:
+	This will override map cvars and will potentially break maps if you don't know what you're doing.
+	Add your CVars sparingly.
 - Outerbeast*/
 const string strCfgDir = "scripts/plugins/store/static.cfg";
 dictionary dictCfg;
@@ -33,13 +32,17 @@ void ReadCfg()
 	File@ pFile = g_FileSystem.OpenFile( strCfgDir, OpenFile::READ );
 
 	if( pFile is null || !pFile.IsOpen() )
+	{
+		g_EngineFuncs.ServerPrint( "StaticCfg: no static.cfg file found.\n" );
 		return;
+	}
 
 	while( !pFile.EOFReached() )
 	{
 		string strCurrentLine;
 		pFile.ReadLine( strCurrentLine );
-		if( strCurrentLine.SubString(0,1) == "#" || strCurrentLine.IsEmpty() )
+
+		if( strCurrentLine.SubString( 0, 1 ) == "#" || strCurrentLine.IsEmpty() )
 			continue;
 
 		array<string> parsed = strCurrentLine.Split( " " );
@@ -53,17 +56,14 @@ void ReadCfg()
 }
 
 void MapInit()
-{	
+{
 	array<string> STR_CVARS_KEYS = dictCfg.getKeys();
 	STR_CVARS_KEYS.sortAsc();
 	string strCVarValue;
 
-	if( dictCfg.isEmpty() )
-		return;
-
 	for( uint i = 0; i < STR_CVARS_KEYS.length(); ++i )
 	{
-		if( STR_CVARS_KEYS[i] == "" || strCVarValue == "" )
+		if( STR_CVARS_KEYS[i] == "" )
 			continue;
 
 		dictCfg.get( STR_CVARS_KEYS[i], strCVarValue );
